@@ -51,7 +51,25 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
 }
 
 # This policy provides the Amazon VPC CNI Plugin (amazon-vpc-cni-k8s) the permissions it requires to modify the IP address configuration on your EKS worker nodes. This permission set allows the CNI to list, describe, and modify Elastic Network Interfaces on your behalf
-resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
+# resource "aws_iam_role_policy_attachment" "AmazonEKS_CNI_Policy" {
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+#   role       = aws_iam_role.NodeGroupRole.name
+# }
+
+resource "aws_iam_role" "vpc_cni_pod_identity_role" {
+  name = "eks-vpc-cni-pod-identity"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "pods.eks.amazonaws.com" }
+      Action    = ["sts:AssumeRole", "sts:TagSession"]
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "vpc_cni_pod_identity_role_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.NodeGroupRole.name
+  role       = aws_iam_role.vpc_cni_pod_identity_role.name
 }

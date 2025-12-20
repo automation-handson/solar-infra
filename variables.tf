@@ -1,6 +1,7 @@
+# General Variables
 variable "region" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
 variable "az" {
@@ -8,21 +9,22 @@ variable "az" {
   default = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
 }
 
-variable "common_tags" {
-  description = "Tags to be added to all resources for auditing or cost management"
-  type        = map(string)
-}
-
+# Will be added to all resources "Name" tag
 variable "env_name" {
+  type        = string
   description = "the default environment name to be added to each resource tag"
-  type        = string
 }
 
+variable "common_tags" {
+  type        = map(string)
+  description = "Tags to be added to all resources for auditing or cost management"
+}
+
+# VPC and Networking Variables
 variable "vpc_cidr_block" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
-
 
 variable "private_network_config" {
   type = map(object({
@@ -64,17 +66,7 @@ variable "public_network_config" {
   }
 }
 
-# variable "subnets" {
-#   description = "Apigee Environment Groups."
-#   type = map(object({
-#     cidr_block        = string
-#     availability_zone = string
-#   }))
-#   default = {}
-# }
-
 variable "ingress_nacl_rules" {
-  description = "Map of ingress NACL rules"
   type = map(object({
     rule_number = number
     protocol    = string
@@ -93,10 +85,10 @@ variable "ingress_nacl_rules" {
     "107" = { rule_number = 107, protocol = "tcp", from_port = 389, to_port = 389, cidr_block = "0.0.0.0/0", rule_action = "allow" }
     "108" = { rule_number = 108, protocol = "tcp", from_port = 22, to_port = 22, cidr_block = "41.44.149.201/32", rule_action = "allow" }
   }
+  description = "Map of ingress NACL rules"
 }
 
 variable "egress_nacl_rules" {
-  description = "Map of egress NACL rules"
   type = map(object({
     rule_number = number
     protocol    = string
@@ -108,29 +100,75 @@ variable "egress_nacl_rules" {
   default = {
     "100" = { rule_number = 100, protocol = "-1", from_port = 0, to_port = 0, cidr_block = "0.0.0.0/0", rule_action = "allow" }
   }
+  description = "Map of egress NACL rules"
 }
 
-variable "cluster_version" {
+# EKS Variables
+variable "eks_cluster_name" {
+  type = string
+}
+
+variable "eks_node_group_name" {
+  type        = string
+  description = "The name of the node group assigned to the EKS cluster"
+}
+
+variable "eks_cluster_version" {
   type        = string
   description = "Cluster version"
 }
 
-variable "instance_types" {
-  description = "An optional description of this resource (triggers recreation on change)."
+variable "eks_instance_types" {
   type        = list(string)
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
-variable "desired_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
+variable "eks_desired_size" {
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
-variable "max_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
+variable "eks_max_size" {
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
-variable "min_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
+variable "eks_min_size" {
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
+}
+
+variable "eks_authorized_source_ranges" {
+  type        = list(string)
+  description = "Addresses or CIDR blocks which are allowed to connect to the eks cluster. The default behavior is to allow anyone (0.0.0.0/0) access. You should restrict access to external IPs that need to access the cluster."
+  default     = ["0.0.0.0/0"]
+}
+
+variable "eks_access_config" {
+  type        = string
+  description = "How users will access the cluster. the possible options are: API, CONFIG_MAP(legacy), or API_AND_CONFIG_MAP"
+  default     = "API"
+}
+
+variable "eks_enabled_cluster_log_types" {
+  type        = list(string)
+  description = "List of the desired control plane logging to enable"
+  default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+}
+
+variable "eks_addons" {
+  type        = list(string)
+  description = "List of EKS addons to be installed on the cluster. pod-identity-agent is excluded here as it's a default addon managed separately."
+  default     = ["vpc-cni", "kube-proxy", "coredns"]
+}
+
+variable "eks_access_entry_users_list" {
+  type        = list(string)
+  description = "List of user ARNs to be associated with the EKS access entry."
+}
+
+variable "eks_access_entry_policy_arn" {
+  type        = string
+  description = "The ARN of the access policy to be associated with the EKS access entry."
+  default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }

@@ -1,18 +1,18 @@
-resource "aws_default_network_acl" "eks_default_nacl" {
-  default_network_acl_id = aws_vpc.eks_vpc.default_network_acl_id
-  subnet_ids = concat([for subnet in aws_subnet.eks_private_subnets : subnet.id],
-                      [for subnet in aws_subnet.eks_public_subnets : subnet.id])
+resource "aws_network_acl" "nacl" {
+  vpc_id = aws_vpc.vpc.id
+  subnet_ids = concat([for subnet in aws_subnet.private_subnets : subnet.id],
+  [for subnet in aws_subnet.public_subnets : subnet.id])
 
   tags = {
     Name = "${var.env_name}-nacl"
   }
 }
 
-resource "aws_network_acl_rule" "eks_nacl_inbound" {
+resource "aws_network_acl_rule" "nacl_inbound" {
   for_each = var.ingress_nacl_rules
-  egress         = false # false means Inbound
+  egress   = false # false means Inbound
 
-  network_acl_id = aws_default_network_acl.eks_default_nacl.id
+  network_acl_id = aws_network_acl.nacl.id
   rule_number    = each.key
   protocol       = each.value.protocol
   rule_action    = each.value.rule_action
@@ -21,17 +21,17 @@ resource "aws_network_acl_rule" "eks_nacl_inbound" {
   to_port        = each.value.to_port
 }
 
-resource "aws_network_acl_rule" "eks_nacl_outbound" {
+resource "aws_network_acl_rule" "nacl_outbound" {
   for_each = var.egress_nacl_rules
-  egress         = true   # This makes it an Outbound rule
+  egress   = true # This makes it an Outbound rule
 
-  network_acl_id = aws_default_network_acl.eks_default_nacl.id
+  network_acl_id = aws_network_acl.nacl.id
   rule_number    = each.key
-  protocol       = each.value.protocol  # "-1" means all protocols (TCP, UDP, ICMP, etc.)
+  protocol       = each.value.protocol # "-1" means all protocols (TCP, UDP, ICMP, etc.)
   rule_action    = each.value.rule_action
   cidr_block     = each.value.cidr_block
-  
+
   # When protocol is -1 (all), port ranges are set to 0
-  from_port      = each.value.from_port
-  to_port        = each.value.to_port
+  from_port = each.value.from_port
+  to_port   = each.value.to_port
 }

@@ -1,5 +1,6 @@
-region = "eu-central-1"
-az     = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
+region   = "eu-central-1"
+az       = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
+env_name = "devvf-sms"
 common_tags = {
   Environment     = "SANDBOX"
   Project         = "vf-grp-ias-dev-ias-sanbox"
@@ -8,8 +9,8 @@ common_tags = {
   Confidentiality = "C2"
   TaggingVersion  = "V2.4"
 }
-env_name       = "test-eks-cluster"
 vpc_cidr_block = "10.0.0.0/16"
+
 private_network_config = {
   "private-security-1" = {
     cidr_block               = "10.0.0.0/23"
@@ -24,6 +25,7 @@ private_network_config = {
     associated_public_subnet = "public-security-3"
   }
 }
+
 public_network_config = {
   "public-security-1" = {
     cidr_block = "10.0.8.0/23"
@@ -35,20 +37,6 @@ public_network_config = {
     cidr_block = "10.0.12.0/23"
   }
 }
-# subnets = {
-#   subnet-private-1 = {
-#     cidr_block        = "10.0.0.0/23"
-#     availability_zone = "eu-central-1a"
-#   }
-#   subnet-private-2 = {
-#     cidr_block        = "10.0.2.0/23"
-#     availability_zone = "eu-central-1b"
-#   }
-#   subnet-private-3 = {
-#     cidr_block        = "10.0.4.0/23"
-#     availability_zone = "eu-central-1c"
-#   }
-# }
 
 ingress_nacl_rules = {
   "99"  = { rule_number = 99, protocol = "tcp", from_port = 1025, to_port = 65535, cidr_block = "0.0.0.0/0", rule_action = "allow" }
@@ -65,8 +53,17 @@ egress_nacl_rules = {
   "100" = { rule_number = 100, protocol = "-1", from_port = 0, to_port = 0, cidr_block = "0.0.0.0/0", rule_action = "allow" }
 }
 
-cluster_version = "1.34"
-instance_types  = ["t3.xlarge"]
-desired_size    = "3"
-max_size        = "3"
-min_size        = "3"
+eks_cluster_name              = "test-cluster"
+eks_node_group_name           = "NG"
+eks_cluster_version           = "1.34"
+eks_instance_types            = ["t3.xlarge"]
+eks_desired_size              = "3"
+eks_max_size                  = "3"
+eks_min_size                  = "3"
+eks_authorized_source_ranges  = ["0.0.0.0/0"]
+eks_access_config             = "API"
+eks_enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+eks_addons                    = ["vpc-cni", "kube-proxy", "coredns"]
+
+eks_access_entry_users_list = ["arn:aws:iam::221133053333:user/anas.hassan1@vodafone.com"]
+eks_access_entry_policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"

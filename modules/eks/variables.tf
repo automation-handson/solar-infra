@@ -1,60 +1,21 @@
-variable "region" {
+# Will be added to all resources "Name" tag
+variable "env_name" {
+  type        = string
+  description = "the default environment name to be added to each resource tag"
+}
+
+variable "common_tags" {
+  type        = map(string)
+  description = "Tags to be added to all resources for auditing or cost management"
+}
+
+variable "cluster_name" {
   type = string
 }
 
-variable "az" {
-  type    = list(string)
-  default = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
-}
-
-variable "vpc_cidr_block" {
-  description = "An optional description of this resource (triggers recreation on change)."
+variable "eks_node_group_name" {
   type        = string
-}
-
-variable "env_name" {
-  description = "An optional description of this resource (triggers recreation on change)."
-  type        = string
-}
-
-variable "private_network_config" {
-  type = map(object({
-    cidr_block               = string
-    associated_public_subnet = string
-  }))
-
-  default = {
-    "private-security-1" = {
-      cidr_block               = "10.0.0.0/23"
-      associated_public_subnet = "public-security-1"
-    },
-    "private-security-2" = {
-      cidr_block               = "10.0.2.0/23"
-      associated_public_subnet = "public-security-2"
-    },
-    "private-security-3" = {
-      cidr_block               = "10.0.4.0/23"
-      associated_public_subnet = "public-security-3"
-    }
-  }
-}
-
-variable "public_network_config" {
-  type = map(object({
-    cidr_block = string
-  }))
-
-  default = {
-    "public-security-1" = {
-      cidr_block = "10.0.8.0/23"
-    },
-    "public-security-2" = {
-      cidr_block = "10.0.10.0/23"
-    },
-    "public-security-3" = {
-      cidr_block = "10.0.12.0/23"
-    }
-  }
+  description = "The name of the node group assigned to the EKS cluster"
 }
 
 variable "cluster_version" {
@@ -62,39 +23,69 @@ variable "cluster_version" {
   description = "Cluster version"
 }
 
-variable "authorized_source_ranges" {
-  type        = string
-  description = "Addresses or CIDR blocks which are allowed to connect to the Vault IP address. The default behavior is to allow anyone (0.0.0.0/0) access. You should restrict access to external IPs that need to access the Vault cluster."
-  default     = "0.0.0.0/0"
-}
-
-
-variable "node_group_name" {
-  description = "An optional description of this resource (triggers recreation on change)."
-  type        = string
-}
-
 variable "instance_types" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = list(string)
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
 variable "desired_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
 variable "max_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
 variable "min_size" {
-  description = "An optional description of this resource (triggers recreation on change)."
   type        = string
+  description = "An optional description of this resource (triggers recreation on change)."
 }
 
-variable "common_tags" {
-  description = "Tags to be added to all resources for auditing or cost management"
-  type = map(string)
+variable "eks_vpc_id" {
+  type        = string
+  description = "Where the EKS will be deployed"
+}
+variable "eks_control_plane_subnet_ids" {
+  type = list(string)
+}
+
+variable "eks_worker_node_subnet_ids" {
+  type = list(string)
+}
+
+variable "authorized_source_ranges" {
+  type        = list(string)
+  description = "Addresses or CIDR blocks which are allowed to connect to the eks cluster. The default behavior is to allow anyone (0.0.0.0/0) access. You should restrict access to external IPs that need to access the cluster."
+  default     = ["0.0.0.0/0"]
+}
+
+variable "eks_access_config" {
+  type        = string
+  description = "How users will access the cluster. the possible options are: API, CONFIG_MAP(legacy), or API_AND_CONFIG_MAP"
+  default     = "API"
+}
+
+variable "eks_enabled_cluster_log_types" {
+  type        = list(string)
+  description = "List of the desired control plane logging to enable"
+  default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+}
+
+variable "eks_addons" {
+  type        = list(string)
+  description = "List of EKS addons to be installed on the cluster. pod-identity-agent is excluded here as it's a default addon managed separately."
+  default     = ["vpc-cni", "kube-proxy", "coredns"]
+}
+
+variable "eks_access_entry_users_list" {
+  type        = list(string)
+  description = "List of user ARNs to be associated with the EKS access entry."
+}
+
+variable "eks_access_entry_policy_arn" {
+  type        = string
+  description = "The ARN of the access policy to be associated with the EKS access entry."
+  default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }
