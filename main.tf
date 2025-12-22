@@ -35,7 +35,6 @@ module "eks_test_cluster" {
   authorized_source_ranges      = var.eks_authorized_source_ranges
   eks_access_config             = var.eks_access_config
   eks_enabled_cluster_log_types = var.eks_enabled_cluster_log_types
-  eks_addons                    = var.eks_addons
   eks_access_entry_users_list   = var.eks_access_entry_users_list
   eks_access_entry_policy_arn   = var.eks_access_entry_policy_arn
   depends_on                    = [module.networking]

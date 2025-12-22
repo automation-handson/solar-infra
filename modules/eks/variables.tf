@@ -73,12 +73,6 @@ variable "eks_enabled_cluster_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
-variable "eks_addons" {
-  type        = list(string)
-  description = "List of EKS addons to be installed on the cluster. pod-identity-agent is excluded here as it's a default addon managed separately."
-  default     = ["vpc-cni", "kube-proxy", "coredns"]
-}
-
 variable "eks_access_entry_users_list" {
   type        = list(string)
   description = "List of user ARNs to be associated with the EKS access entry."

@@ -63,7 +63,6 @@ eks_min_size                  = "3"
 eks_authorized_source_ranges  = ["0.0.0.0/0"]
 eks_access_config             = "API"
 eks_enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-eks_addons                    = ["vpc-cni", "kube-proxy", "coredns"]
 
 eks_access_entry_users_list = ["arn:aws:iam::221133053333:user/anas.hassan1@vodafone.com"]
 eks_access_entry_policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
