@@ -21,6 +21,7 @@ module "networking" {
 module "eks_test_cluster" {
   source                        = "./modules/eks"
   env_name                      = var.env_name
+  region                        = var.region
   common_tags                   = var.common_tags
   cluster_name                  = var.eks_cluster_name
   eks_node_group_name           = var.eks_node_group_name

@@ -4,6 +4,11 @@ variable "env_name" {
   description = "the default environment name to be added to each resource tag"
 }
 
+variable "region" {
+  type        = string
+  description = "AWS region"
+}
+
 variable "common_tags" {
   type        = map(string)
   description = "Tags to be added to all resources for auditing or cost management"

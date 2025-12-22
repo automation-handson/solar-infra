@@ -42,9 +42,9 @@ resource "aws_iam_role" "addon_roles" {
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
+      Effect    = "Allow"
       Principal = { Service = "pods.eks.amazonaws.com" }
-      Action = ["sts:AssumeRole", "sts:TagSession"]
+      Action    = ["sts:AssumeRole", "sts:TagSession"]
     }]
   })
 }
@@ -63,13 +63,13 @@ resource "aws_eks_pod_identity_association" "associate_addons_roles_to_sa" {
   namespace       = "kube-system"
   service_account = each.value.service_account
   role_arn        = aws_iam_role.addon_roles[each.key].arn
-  depends_on = [ aws_eks_addon.pod_identity_addon, aws_iam_role_policy_attachment.addon_policy_attachment]
+  depends_on      = [aws_eks_addon.pod_identity_addon, aws_iam_role_policy_attachment.addon_policy_attachment]
 }
 
 # install the vpc-cni as it's required by other addons
 resource "aws_eks_addon" "vpc_cni_addons" {
-  cluster_name = aws_eks_cluster.eks_cluster.name
-  addon_name   = "vpc-cni"
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  addon_name    = "vpc-cni"
   addon_version = data.aws_eks_addon_version.eks_addon_compatible_versions["vpc-cni"].version
 
   # Critical: Ensure the agent and identities are ready before starting the addons
