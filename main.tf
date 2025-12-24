@@ -40,3 +40,17 @@ module "eks_test_cluster" {
   eks_access_entry_policy_arn   = var.eks_access_entry_policy_arn
   depends_on                    = [module.networking]
 }
+
+module "hosted_zone" {
+  source           = "./modules/hosted-zone"
+  root_domain_name = var.root_domain_name
+  sub_domain_name  = var.sub_domain_name
+  depends_on       = [module.eks_test_cluster]
+}
+
+module "acm_wildcard_certificate" {
+  source     = "./modules/acm-certificate"
+  fqdn       = var.sub_domain_name
+  domain_zone_id = module.hosted_zone.sub_domain_zone_id
+  depends_on = [module.hosted_zone]
+}

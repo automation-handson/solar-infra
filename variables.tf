@@ -167,3 +167,14 @@ variable "eks_access_entry_policy_arn" {
   description = "The ARN of the access policy to be associated with the EKS access entry."
   default     = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 }
+
+variable "root_domain_name" {
+  type        = string
+  default     = null
+  description = "If specified, tf will create a root hosted zone. if not, tf will skip the root domain and create a subdomain"
+}
+
+variable "sub_domain_name" {
+  type        = string
+  description = "The subdomain name to create the hosted zone for, e.g., dev.example.com"
+}

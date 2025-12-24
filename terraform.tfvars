@@ -66,3 +66,6 @@ eks_enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerMan
 
 eks_access_entry_users_list = ["arn:aws:iam::221133053333:user/anas.hassan1@vodafone.com"]
 eks_access_entry_policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+root_domain_name = "devvf.com"
+sub_domain_name  = "test.devvf.com"

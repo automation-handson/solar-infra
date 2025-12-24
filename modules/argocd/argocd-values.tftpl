@@ -1,0 +1,115 @@
+global:
+  domain: argocd.devvf.com
+redis:
+  enabled: false
+
+redis-ha:
+  enabled: true
+
+controller:
+  replicas: 1
+
+server:
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+
+  ingress:
+    enabled: true
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-central-1:221133053333:certificate/ad1e683b-9ce4-4313-8615-ecb1de2e6d2c
+      alb.ingress.kubernetes.io/tags: "Environment=sandbox,Project=vf-grp-ias-dev-ias-sanbox,ManagedBy=o-380-dl-vci-secretsmanagement@vodafone.onmicrosoft.com,SecurityZone=DEV, Confidentiality=C2,TaggingVersion=V2.4"
+      alb.ingress.kubernetes.io/group.name: test-apps-alb
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+    ingressClassName: alb
+    hostname: argocd.devvf.com
+  
+repoServer:
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+    - name: cmp-plugin
+      configMap:
+        name: cmp-plugin
+
+  initContainers:
+    - name: download-tools
+      image: registry.access.redhat.com/ubi8
+      env:
+        - name: AVP_VERSION
+          value: 1.18.0
+      command: [sh, -c]
+      args:
+        - >-
+          curl -L https://github.com/argoproj-labs/argocd-vault-plugin/releases/download/v$(AVP_VERSION)/argocd-vault-plugin_$(AVP_VERSION)_linux_amd64 -o argocd-vault-plugin &&
+          chmod +x argocd-vault-plugin &&
+          mv argocd-vault-plugin /custom-tools/
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+
+  extraContainers: 
+    - name: avp
+      command: [/var/run/argocd/argocd-cmp-server]
+      image: registry.access.redhat.com/ubi8
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
+        - mountPath: /tmp
+          name: tmp
+
+        # Register plugins into sidecar
+        - mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          subPath: avp.yaml
+          name: cmp-plugin
+
+        # Important: Mount tools into $PATH
+        - name: custom-tools
+          subPath: argocd-vault-plugin
+          mountPath: /usr/local/bin/argocd-vault-plugin  
+  
+
+applicationSet:
+  replicas: 1
+
+# Install ArgoCD Vault Plugin as a Config Management Plugin
+# Used in the Repo Server
+extraObjects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: cmp-plugin
+      namespace: argocd
+    data:
+      avp.yaml: |
+        apiVersion: argoproj.io/v1alpha1
+        kind: ConfigManagementPlugin
+        metadata:
+          name: argocd-vault-plugin
+        spec:
+          allowConcurrency: true
+          discover:
+            find:
+              command:
+                - sh
+                - "-c"
+                - "find . -name '*.yaml' | xargs -I {} grep \"<path\\|avp\\.kubernetes\\.io\" {} | grep ."
+          generate:
+            command:
+              - argocd-vault-plugin
+              - generate
+              - "."
+          lockRepo: false
