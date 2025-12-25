@@ -1,5 +1,5 @@
 global:
-  domain: argocd.devvf.com
+  domain: ${domain_name}
 redis:
   enabled: false
 
@@ -21,12 +21,12 @@ server:
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
       alb.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-central-1:221133053333:certificate/ad1e683b-9ce4-4313-8615-ecb1de2e6d2c
-      alb.ingress.kubernetes.io/tags: "Environment=sandbox,Project=vf-grp-ias-dev-ias-sanbox,ManagedBy=o-380-dl-vci-secretsmanagement@vodafone.onmicrosoft.com,SecurityZone=DEV, Confidentiality=C2,TaggingVersion=V2.4"
-      alb.ingress.kubernetes.io/group.name: test-apps-alb
+      alb.ingress.kubernetes.io/certificate-arn: ${acm_certificate_arn}
+      alb.ingress.kubernetes.io/tags: ${ingress_tags}
+      alb.ingress.kubernetes.io/group.name: ${ingress_group_name}
       alb.ingress.kubernetes.io/ssl-redirect: "443"
-    ingressClassName: alb
-    hostname: argocd.devvf.com
+    ingressClassName: ${ingress_class_name}
+    hostname: ${domain_name}
   
 repoServer:
   autoscaling:
@@ -45,7 +45,7 @@ repoServer:
       image: registry.access.redhat.com/ubi8
       env:
         - name: AVP_VERSION
-          value: 1.18.0
+          value: ${avp_version}
       command: [sh, -c]
       args:
         - >-

@@ -183,3 +183,25 @@ variable "sub_domain_name" {
   type        = string
   description = "The subdomain name to create the hosted zone for, e.g., dev.example.com"
 }
+
+variable "argocd_chart_version" {
+  type        = string
+  description = "Argocd Chart Version"
+  default     = "7.7.0"
+}
+
+variable "argocd_ingress_class_name" {
+  type        = string
+  description = "The Ingress class name that will be used by argocd for the ingress resource"
+}
+
+variable "argocd_ingress_group_name" {
+  type        = string
+  description = "The Ingress group name that will be used by argocd for the ingress resource"
+}
+
+variable "argocd_avp_version" {
+  type        = string
+  description = "Argocd vault plugin version"
+  default     = "1.18.0"
+}

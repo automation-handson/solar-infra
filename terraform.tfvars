@@ -71,3 +71,8 @@ eks_access_entry_policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSC
 
 root_domain_name = "devvf.com"
 sub_domain_name  = "sandbox.devvf.com"
+
+argocd_chart_version      = "7.7.0"
+argocd_avp_version        = "1.18.0"
+argocd_ingress_class_name = "alb"
+argocd_ingress_group_name = "devops-tools"
