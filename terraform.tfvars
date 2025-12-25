@@ -1,6 +1,6 @@
 region   = "eu-central-1"
 az       = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
-env_name = "devvf-sms"
+env_name = "sandbox"
 common_tags = {
   Environment     = "SANDBOX"
   Project         = "vf-grp-ias-dev-ias-sanbox"
@@ -53,7 +53,7 @@ egress_nacl_rules = {
   "100" = { rule_number = 100, protocol = "-1", from_port = 0, to_port = 0, cidr_block = "0.0.0.0/0", rule_action = "allow" }
 }
 
-eks_cluster_name              = "test-cluster"
+eks_cluster_name              = "sms-cluster"
 eks_node_group_name           = "NG"
 eks_cluster_version           = "1.34"
 eks_instance_types            = ["t3.xlarge"]
@@ -64,8 +64,10 @@ eks_authorized_source_ranges  = ["0.0.0.0/0"]
 eks_access_config             = "API"
 eks_enabled_cluster_log_types = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
+eks_lbc_version = "1.17.0"
+
 eks_access_entry_users_list = ["arn:aws:iam::221133053333:user/anas.hassan1@vodafone.com"]
 eks_access_entry_policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
 root_domain_name = "devvf.com"
-sub_domain_name  = "test.devvf.com"
+sub_domain_name  = "sandbox.devvf.com"

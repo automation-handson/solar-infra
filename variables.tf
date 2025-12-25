@@ -156,6 +156,11 @@ variable "eks_enabled_cluster_log_types" {
   default     = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 }
 
+variable "eks_lbc_version" {
+  type        = string
+  description = "The version of the AWS Load Balancer Controller to deploy"
+  default     = "1.17.0"
+}
 
 variable "eks_access_entry_users_list" {
   type        = list(string)

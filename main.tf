@@ -38,6 +38,7 @@ module "eks_test_cluster" {
   eks_enabled_cluster_log_types = var.eks_enabled_cluster_log_types
   eks_access_entry_users_list   = var.eks_access_entry_users_list
   eks_access_entry_policy_arn   = var.eks_access_entry_policy_arn
+  eks_lbc_version               = var.eks_lbc_version
   depends_on                    = [module.networking]
 }
 
