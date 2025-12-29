@@ -76,3 +76,5 @@ argocd_chart_version      = "7.7.0"
 argocd_avp_version        = "1.18.0"
 argocd_ingress_class_name = "alb"
 argocd_ingress_group_name = "devops-tools"
+
+external_dns_chart_version = "1.19.0"

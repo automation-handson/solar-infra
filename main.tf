@@ -49,6 +49,14 @@ module "hosted_zone" {
   depends_on       = [module.eks_test_cluster]
 }
 
+module "external-dns" {
+  source           = "./modules/external-dns"
+  chart_version    = var.external_dns_chart_version
+  aws_region       = var.region
+  eks_cluster_name = module.eks_test_cluster.eks_cluster_name
+  depends_on       = [module.hosted_zone]
+}
+
 module "acm_wildcard_certificate" {
   source         = "./modules/acm-certificate"
   fqdn           = var.sub_domain_name
@@ -60,12 +68,11 @@ module "argocd" {
   source              = "./modules/argocd"
   chart_version       = var.argocd_chart_version
   domain_name         = "argocd.${var.sub_domain_name}"
-  acm_certificate_arn = module.acm_wildcard_certificate.acm_certificate_arn
   ingress_class_name  = var.argocd_ingress_class_name
   ingress_group_name  = var.argocd_ingress_group_name
   avp_version         = var.argocd_avp_version
   ingress_tags        = var.common_tags
   eks_cluster_name    = module.eks_test_cluster.eks_cluster_name
   domain_zone_id      = module.hosted_zone.sub_domain_zone_id
-  depends_on          = [module.acm_wildcard_certificate]
+  depends_on          = [module.acm_wildcard_certificate, module.external-dns]
 }

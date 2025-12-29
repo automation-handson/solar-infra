@@ -205,3 +205,9 @@ variable "argocd_avp_version" {
   description = "Argocd vault plugin version"
   default     = "1.18.0"
 }
+
+variable "external_dns_chart_version" {
+  type        = string
+  description = "external-dns helm chart version"
+  default     = "1.19.0"
+}

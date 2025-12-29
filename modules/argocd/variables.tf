@@ -19,11 +19,6 @@ variable "domain_name" {
   description = "The domain name from which argocd is accessible"
 }
 
-variable "acm_certificate_arn" {
-  type        = string
-  description = "The ARN of the SSL certificate to be used by argocd and defined in the ALB ingress"
-}
-
 variable "ingress_class_name" {
   type        = string
   description = "The Ingress class name that will be used by argocd for the ingress resource"
