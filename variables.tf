@@ -211,3 +211,13 @@ variable "external_dns_chart_version" {
   description = "external-dns helm chart version"
   default     = "1.19.0"
 }
+
+variable "pod_identities" {
+  type = list(object({
+    name            = string
+    namespace       = string
+    service_account = string
+    policy_path     = string # the path to the IAM policy JSON file that will be parsed here in the main.tf using local and then passed to the module as policy_json string
+  }))
+  description = "List of pod identities to create"
+}

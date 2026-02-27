@@ -28,3 +28,12 @@ This Repo Serves as the Infrastructure Repo (2/3) for the DevOps ecosystem:
 11. Trivy --> Docker Images Vulnerability check
 12. Kaniko --> Build Container Images
 13. Prometheus, and Grafana --> Monitoring Stack
+
+
+### Manual Steps
+1. Buy the domain
+2. Configure Azure entraID by creating groups and users
+3. create TLS certs for Vault and put them in infra Repo and Terraform will handel the rest
+
+### Bridging the Gap Between Infra and GitOps
+1- Terraform will read the TLS directory in the infra Repo that contains the TLS certificates and the Vault license and create k8s secret and get read by the GitOps approach 
